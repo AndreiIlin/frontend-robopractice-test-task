@@ -10,11 +10,13 @@ export const useFetchData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setError(false);
         setLoading(true);
         const response = await axios.get<UserInfo[]>(routes.dataPath());
         setLoading(false);
         setData(response.data);
       } catch (err) {
+        setLoading(false);
         setError(true);
       }
     };

@@ -1,18 +1,17 @@
-import { Box, Paper, Table, TableContainer } from '@mui/material';
+import { Box, CircularProgress, Paper, Table, TableContainer, Typography } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
 import { Order } from '../../models/order';
-import { FormattedDay, FormattedUserInfo } from '../../models/userInfo';
 import TableBodyCells from '../tableBodyCells/TableBodyCells';
 import TableHeadCells from '../tableHeadCells/TableHeadCells';
+import Pagination from '../tablePagination/Pagination';
 
 const NotWorkingHoursTable: React.FC = () => {
-  const { formattedData } = useData();
-
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof FormattedDay | keyof  FormattedUserInfo>('username');
+  const [orderBy, setOrderBy] = React.useState('username');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const { isError, isLoading } = useData();
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -22,14 +21,19 @@ const NotWorkingHoursTable: React.FC = () => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  if (isLoading) return (
+    <>
+      <CircularProgress color="secondary" />
+      <CircularProgress color="success" />
+      <CircularProgress color="inherit" />
+    </>
+  );
+
+  if (isError) return (
+    <Typography variant={'h5'}>Oops something goes wrong.... Please refresh the page</Typography>
+  );
+
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -49,6 +53,12 @@ const NotWorkingHoursTable: React.FC = () => {
             />
           </Table>
         </TableContainer>
+        <Pagination
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+        />
       </Paper>
     </Box>
   );

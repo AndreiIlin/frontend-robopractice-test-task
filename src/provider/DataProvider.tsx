@@ -1,9 +1,8 @@
-import React, { createContext, ReactNode } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
+import useDebounce from '../hooks/useDebounce';
 import { useFetchData } from '../hooks/useFetchData';
 import { IDataContext } from '../models/context';
-import { FormattedUserInfo } from '../models/userInfo';
 import { getDays, getTime } from '../utils/getTableHeadCells';
-
 
 export const DataContext = createContext<IDataContext | {}>({});
 
@@ -12,40 +11,37 @@ interface DataProviderProps {
 }
 
 const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
+  const [searchValue, setSearchValue] = useState('');
+  const debouncedSearchValue = useDebounce(searchValue);
   const { data, isError, isLoading } = useFetchData();
   const fullMonthDays = getDays();
-  const formattedData: FormattedUserInfo[] = data.map((user) => {
+  const formattedData = data.map((user) => {
     const formattedDays = user.Days.map((day) => {
       return {
         day: new Date(day.Date).getDate(),
         time: getTime(day.End) - getTime(day.Start),
       };
     });
-    const formattedFullDays = fullMonthDays.map((d) => {
+    const formattedFullDays = fullMonthDays.reduce((acc, d) => {
       const existingDay = formattedDays.find((fd) => fd.day === d);
-      if (!existingDay) {
-        return {
-          day: d,
-          time: 0,
-        };
-      }
-      return {
-        day: d,
-        time: existingDay.time,
+      return existingDay ? {
+        ...acc,
+        [d.toString()]: existingDay.time,
+        total: acc.total + existingDay.time,
+      } : {
+        ...acc,
+        [d.toString()]: 0,
+        total: acc.total,
       };
-    });
-    const totalTime = formattedFullDays.reduce((acc, v) => acc + v.time, 0);
+    }, { total: 0 });
     return {
-      id: user.id,
       username: user.Fullname,
-      days: formattedFullDays,
-      total: totalTime,
+      ...formattedFullDays,
     };
   });
-  console.log(formattedData);
-
+  const searchedData = formattedData.filter((user) => user.username.toLowerCase().includes(debouncedSearchValue.toLowerCase()))
   return (
-    <DataContext.Provider value={{ formattedData }}>
+    <DataContext.Provider value={{ searchedData, isError, isLoading, searchValue, setSearchValue }}>
       {children}
     </DataContext.Provider>
   );

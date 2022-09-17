@@ -2,7 +2,6 @@ import { TableBody, TableCell, TableRow } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
 import { Order } from '../../models/order';
-import { FormattedDay, FormattedUserInfo } from '../../models/userInfo';
 import { getFormattedTime } from '../../utils/getTableHeadCells';
 
 interface TableBodyCellsProps {
@@ -13,11 +12,9 @@ interface TableBodyCellsProps {
 }
 
 const TableBodyCells: React.FC<TableBodyCellsProps> = ({ page, rowsPerPage, order, orderBy }) => {
-  const { formattedData } = useData();
+  const { searchedData } = useData();
 
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (orderBy === 'days') return;
-
+  const descendingComparator = <T, >(a: T, b: T, orderBy: keyof T) => {
     if (b[orderBy] < a[orderBy]) {
       return -1;
     }
@@ -25,57 +22,59 @@ const TableBodyCells: React.FC<TableBodyCellsProps> = ({ page, rowsPerPage, orde
       return 1;
     }
     return 0;
-  }
+  };
 
-  function getComparator(
+  const getComparator = <Key extends keyof any>(
     order: Order,
-    orderBy: string,
+    orderBy: Key,
   ): (
-    a: string,
-    b: string,
-  ) => number {
-    return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
+    a: { [key in Key]: number | string },
+    b: { [key in Key]: number | string },
+  ) => number => order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - formattedData.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchedData.length) : 0;
 
   return (
     <TableBody>
-      {formattedData
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      {searchedData
         .sort(getComparator(order, orderBy))
-        .map((user) => (
-          <TableRow
-            hover
-            key={user.id}
-          >
-            <TableCell
-              component={'th'}
-              scope={'row'}
-            >
-              {user.username}
-            </TableCell>
-            {user.days
-              .sort(getComparator(order, orderBy))
-              .map((d) => (
-              <TableCell>
-                {getFormattedTime(d.time)}
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((user) => {
+          const keys = Object.keys(user).sort((a, b) => {
+            if (a === 'username' || b === 'username') return -1;
+            return 0;
+          });
+          const cells = keys.map((key) => key === 'username' ? (
+              <TableCell
+                key={key}
+                component={'th'}
+                scope={'row'}
+              >
+                {user.username}
               </TableCell>
-            ))}
-            <TableCell>
-              {getFormattedTime(user.total)}
-            </TableCell>
-          </TableRow>
-        ))
+            ) : (
+              <TableCell key={key}>
+                {getFormattedTime(user[key] as number)}
+              </TableCell>
+            ),
+          );
+          return (
+            <TableRow
+              hover
+              key={user.username}
+              style={{ height: 75 }}
+            >
+              {cells}
+            </TableRow>
+          );
+        })
       }
       {emptyRows > 0 && (
         <TableRow
-          style={{
-            height: 53 * emptyRows,
-          }}
+          style={{ height: 75 * emptyRows }}
         >
           <TableCell colSpan={33} />
         </TableRow>

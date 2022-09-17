@@ -6,7 +6,7 @@ export interface Day {
 
 export interface FormattedDay {
   time: number;
-  day: number
+  day: number;
 }
 
 export interface UserInfo {
@@ -20,4 +20,8 @@ export interface FormattedUserInfo {
   username: string;
   days: FormattedDay[];
   total: number;
+}
+
+export type UserData = {
+  [key: string]: string | number;
 }
