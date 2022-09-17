@@ -37,7 +37,7 @@ const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     const totalTime = formattedFullDays.reduce((acc, v) => acc + v.time, 0);
     return {
       id: user.id,
-      name: user.Fullname,
+      username: user.Fullname,
       days: formattedFullDays,
       total: totalTime,
     };

@@ -2,6 +2,7 @@ import { Box, Paper, Table, TableContainer } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
 import { Order } from '../../models/order';
+import { FormattedDay, FormattedUserInfo } from '../../models/userInfo';
 import TableBodyCells from '../tableBodyCells/TableBodyCells';
 import TableHeadCells from '../tableHeadCells/TableHeadCells';
 
@@ -9,7 +10,7 @@ const NotWorkingHoursTable: React.FC = () => {
   const { formattedData } = useData();
 
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState('User');
+  const [orderBy, setOrderBy] = React.useState<keyof FormattedDay | keyof  FormattedUserInfo>('username');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -41,6 +42,8 @@ const NotWorkingHoursTable: React.FC = () => {
               onRequestSort={handleRequestSort}
             />
             <TableBodyCells
+              order={order}
+              orderBy={orderBy}
               page={page}
               rowsPerPage={rowsPerPage}
             />

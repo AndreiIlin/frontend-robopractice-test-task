@@ -9,13 +9,14 @@ import { getTableHeadCells } from '../../utils/getTableHeadCells';
 interface TableHeadCellsProps {
   order: Order;
   orderBy: string;
-  onRequestSort: () => void;
+  onRequestSort: (event: React.MouseEvent<unknown>,
+                  property: string,) => void;
 }
 
 const TableHeadCells: React.FC<TableHeadCellsProps> = ({order, orderBy, onRequestSort}) => {
   const cells: TableHeadCell[] = getTableHeadCells();
   const createSortHandler =
-    (property) => (event: React.MouseEvent<unknown>) => {
+    (property: string) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 

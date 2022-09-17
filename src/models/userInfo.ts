@@ -17,7 +17,7 @@ export interface UserInfo {
 
 export interface FormattedUserInfo {
   id: number;
-  name: string;
+  username: string;
   days: FormattedDay[];
   total: number;
 }

@@ -14,8 +14,8 @@ export const getFormattedTime = (time: number): string => {
 
 export const getTableHeadCells = () => {
   const days = getDays();
-  return ['User', ...days, 'Total'].map((cell) => ({
-    id: cell.toString(),
+  return ['Username', ...days, 'Total'].map((cell) => ({
+    id: cell.toString().toLowerCase(),
     label: cell.toString(),
   }));
 };
