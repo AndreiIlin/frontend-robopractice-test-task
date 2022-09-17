@@ -1,24 +1,11 @@
 import { TablePagination } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
+import { useTableData } from '../../hooks/useTableData';
 
-interface PaginationProps {
-  rowsPerPage: number;
-  setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-}
-
-const Pagination: React.FC<PaginationProps> = ({ rowsPerPage, page, setPage, setRowsPerPage }) => {
+const Pagination: React.FC = () => {
   const { searchedData } = useData();
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  const { rowsPerPage, page, handleChangeRowsPerPage, handleChangePage } = useTableData();
 
   return (
     <TablePagination

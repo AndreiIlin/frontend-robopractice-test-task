@@ -1,22 +1,13 @@
 import { Box, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import React from 'react';
-import { Order } from '../../models/order';
+import { useTableData } from '../../hooks/useTableData';
 import { TableHeadCell } from '../../models/tableHeadCell';
-import { getTableHeadCells } from '../../utils/getTableHeadCells';
+import { getTableHeadCells } from '../../utils/IDontKnowHowToName';
 
-interface TableHeadCellsProps {
-  order: Order;
-  orderBy: string;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
-}
-
-const TableHeadCells: React.FC<TableHeadCellsProps> = ({ order, orderBy, onRequestSort }) => {
+const TableHeadCells: React.FC = () => {
   const cells: TableHeadCell[] = getTableHeadCells();
-  const createSortHandler =
-    (property: string) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+  const { handleSort, order, orderBy } = useTableData();
 
   return (
     <TableHead>
@@ -30,7 +21,7 @@ const TableHeadCells: React.FC<TableHeadCellsProps> = ({ order, orderBy, onReque
             <TableSortLabel
               active={orderBy === cell.id}
               direction={orderBy === cell.id ? order : 'asc'}
-              onClick={createSortHandler(cell.id)}
+              onClick={handleSort(cell.id)}
             >
               {cell.label}
               {orderBy === cell.id ? (
