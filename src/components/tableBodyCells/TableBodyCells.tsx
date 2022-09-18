@@ -1,12 +1,12 @@
 import { TableBody, TableCell, TableRow } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
-import { useTableData } from '../../hooks/useTableData';
-import { getFormattedTime } from '../../utils/IDontKnowHowToName';
+import { useTable } from '../../hooks/useTable';
+import { formatTime } from '../../utils/helper';
 
 const TableBodyCells: React.FC = () => {
   const { searchedData } = useData();
-  const { page, rowsPerPage, order, orderBy, getComparator } = useTableData();
+  const { page, rowsPerPage, order, orderBy, getComparator } = useTable();
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchedData.length) : 0;
 
@@ -30,7 +30,7 @@ const TableBodyCells: React.FC = () => {
               </TableCell>
             ) : (
               <TableCell key={key}>
-                {getFormattedTime(user[key] as number)}
+                {formatTime(user[key] as number)}
               </TableCell>
             ),
           );

@@ -1,7 +1,7 @@
 import { Alert, Box, Paper, Table, TableContainer } from '@mui/material';
 import React from 'react';
 import { useData } from '../../hooks/useData';
-import TableDataProvider from '../../provider/TableDataProvider';
+import TableProvider from '../../provider/TableProvider';
 import TableBodyCells from '../tableBodyCells/TableBodyCells';
 import TableHeadCells from '../tableHeadCells/TableHeadCells';
 import Pagination from '../tablePagination/Pagination';
@@ -17,7 +17,7 @@ const NotWorkingHoursTable: React.FC = () => {
   );
 
   return (
-    <TableDataProvider>
+    <TableProvider>
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <TableContainer>
@@ -29,7 +29,7 @@ const NotWorkingHoursTable: React.FC = () => {
           <Pagination />
         </Paper>
       </Box>
-    </TableDataProvider>
+    </TableProvider>
   );
 };
 

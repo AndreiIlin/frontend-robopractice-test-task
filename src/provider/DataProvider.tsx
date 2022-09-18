@@ -2,8 +2,8 @@ import axios from 'axios';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import { IDataContext } from '../models/contexts';
-import { UserInfo } from '../models/userInfo';
-import { formatData } from '../utils/IDontKnowHowToName';
+import { User } from '../models/user';
+import { formatData } from '../utils/helper';
 import { routes } from '../utils/routes';
 
 export const DataContext = createContext<IDataContext | {}>({});
@@ -13,7 +13,7 @@ interface DataProviderProps {
 }
 
 const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
-  const [data, setData] = useState<UserInfo[]>([]);
+  const [data, setData] = useState<User[]>([]);
   const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -26,7 +26,7 @@ const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       try {
         setError(false);
         setLoading(true);
-        const response = await axios.get<UserInfo[]>(routes.dataPath());
+        const response = await axios.get<User[]>(routes.dataPath());
         setLoading(false);
         setData(response.data);
       } catch (err) {

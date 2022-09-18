@@ -1,33 +1,20 @@
 import React, { createContext } from 'react';
-import { ITableDataContext } from '../models/contexts';
-import { Order } from '../models/order';
+import { ITableContext } from '../models/contexts';
+import { SortOrder } from '../models/sortOrder';
 
-export const TableDataContext = createContext<ITableDataContext | {}>({});
+export const TableContext = createContext<ITableContext | {}>({});
 
 interface TableDataProviderProps {
   children: React.ReactNode;
 }
 
-const TableDataProvider: React.FC<TableDataProviderProps> = ({ children }) => {
-  const [order, setOrder] = React.useState<Order>('asc');
+const TableProvider: React.FC<TableDataProviderProps> = ({ children }) => {
+  const [order, setOrder] = React.useState<SortOrder>('asc');
   const [orderBy, setOrderBy] = React.useState('username');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleSort = (property: string) => () => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const createSortHandler =
-    (property: string) => (event: React.MouseEvent<unknown>) => {
-      handleRequestSort(event, property);
-    };
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: string,
-  ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -44,7 +31,7 @@ const TableDataProvider: React.FC<TableDataProviderProps> = ({ children }) => {
   };
 
   const getComparator = <Key extends keyof any>(
-    order: Order,
+    order: SortOrder,
     orderBy: Key,
   ): (
     a: { [key in Key]: number | string },
@@ -62,7 +49,7 @@ const TableDataProvider: React.FC<TableDataProviderProps> = ({ children }) => {
     setPage(0);
   };
   return (
-    <TableDataContext.Provider
+    <TableContext.Provider
       value={{
         order,
         orderBy,
@@ -75,8 +62,8 @@ const TableDataProvider: React.FC<TableDataProviderProps> = ({ children }) => {
       }}
     >
       {children}
-    </TableDataContext.Provider>
+    </TableContext.Provider>
   );
 };
 
-export default TableDataProvider;
+export default TableProvider;
